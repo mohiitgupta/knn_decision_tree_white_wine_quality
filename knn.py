@@ -7,7 +7,6 @@ def euclidean_distance(point1, point2):
     sum = 0;
     for i in range(len(point1)):
         sum += (point1[i]-point2[i])*(point1[i]-point2[i])
-
     sum = math.sqrt(sum)
     return sum
 
@@ -46,7 +45,7 @@ def divide_folds(k, data):
         del folds[4]
     return folds
 
-def split_folds(test_index, folds):
+def split_folds_train_test(test_index, folds):
     test_fold = folds[test_index]
     train_fold = []
     for x in range(len(folds)):
@@ -55,7 +54,7 @@ def split_folds(test_index, folds):
 
     return train_fold, test_fold
 
-def split_train(train_data):
+def split_train_validation(train_data):
     validation_len = len(train_data)/5
     validation = train_data[:validation_len]
     train = train_data[validation_len:]
@@ -63,7 +62,7 @@ def split_train(train_data):
     # print train[0]
     return train, validation
 
-def findNormParams(train_data):
+def find_normalization_params(train_data):
     minValue = [x for x in train_data[0]]
     maxValue = [x for x in train_data[0]]
     for example in train_data:
@@ -85,7 +84,6 @@ def min_max_norm(value, minValue, maxValue, scale):
         value = scale
     return value
 
-
 def normalize(data, minValue, maxValue, ignored_feature):
     features, labels = [],[]
     for example in data:
@@ -97,8 +95,6 @@ def normalize(data, minValue, maxValue, ignored_feature):
         features.append(normalized_example)
 
     return features, labels
-
-
 
 def knn_output(test_point, train_points, train_labels, k, is_weighting):
     distance = []
@@ -134,7 +130,6 @@ def knn_output(test_point, train_points, train_labels, k, is_weighting):
 
     return predicted_label, predicted_label_2
 
-
 def shuffle_data():
     with open('winequality-white.csv', 'rb') as csvfile:
         csvreader = csv.reader(csvfile, delimiter = ';')
@@ -147,57 +142,6 @@ def shuffle_data():
     shuffle(data)
     with open('shuffled_data_wine', 'wb') as fp:
         pickle.dump(data, fp)
-
-def main():
-
-    #shuffled the data and stored it into file shuffled_data_wine
-    # uncomment the line below to work on original file
-    # shuffle_data()
-    
-    with open ('shuffled_data_wine', 'rb') as fp:
-        data = pickle.load(fp)
-    # print len(data)
-    folds = divide_folds(4, data)
-    
-    for i in range(4):
-        # print len(folds)
-        train_data, test_data = split_folds(i, folds)
-        # print len(train_data)
-        # print len(test_data)
-        # shuffle(train_data)
-        # print train_data[0]
-        train, validation = split_train(train_data)
-        # print len(train)
-        # print len(validation)
-        minValue, maxValue = findNormParams(train_data);
-        # print "min value is ", minValue
-        # print "max value is ", maxValue
-        # print "no of features are ", len(minValue)-1
-
-        
-
-        #feature engineering
-        # for i in range(11):
-        ignored_feature = [2]
-        train_norm, train_labels = normalize(train, minValue, maxValue, ignored_feature)
-        valid_norm, valid_labels = normalize(validation, minValue, maxValue, ignored_feature)
-        test_norm, test_labels = normalize(test_data, minValue, maxValue, ignored_feature)
-        # print norm_train[20]
-        # print validation_labels[25]
-        # print valid_norm[25]
-        # print train_data[1225], " ", test_data[0]
-
-        for k in range(12,13):
-            #validation data
-            # print "k is ", k, "ignored feature is ", ignored_feature
-            print "accuracy for validation ", get_results(train_norm, train_labels, valid_norm, valid_labels, k)
-
-            #test data
-            print "accuracy for test ", get_results(train_norm, train_labels, test_norm, test_labels, k)
-        
-
-
-    # print len(folds[0])
 
 def get_results(train, train_labels, test, test_labels, k):
     count = 0
@@ -218,6 +162,38 @@ def get_results(train, train_labels, test, test_labels, k):
     return 100.0*correct/count
     # print incorrect
         # break
+
+def main():
+    #shuffled the data and stored it into file shuffled_data_wine
+    # uncomment the line below to work on original file
+    # shuffle_data()
+    
+    with open ('shuffled_data_wine', 'rb') as fp:
+        data = pickle.load(fp)
+    # print len(data)
+    no_folds = 4
+    folds = divide_folds(no_folds, data)
+    
+    for i in range(no_folds):
+        train_data, test_data = split_folds_train_test(i, folds)
+        # shuffle(train_data)
+        train, validation = split_train_validation(train_data)
+        minValue, maxValue = find_normalization_params(train_data);
+
+        #feature engineering
+        # for i in range(11):
+        ignored_feature = [2]
+        train_norm, train_labels = normalize(train, minValue, maxValue, ignored_feature)
+        valid_norm, valid_labels = normalize(validation, minValue, maxValue, ignored_feature)
+        test_norm, test_labels = normalize(test_data, minValue, maxValue, ignored_feature)
+
+        for k in range(12,13):
+            #validation data
+            # print "k is ", k, "ignored feature is ", ignored_feature
+            print "accuracy for validation ", get_results(train_norm, train_labels, valid_norm, valid_labels, k)
+
+            #test data
+            print "accuracy for test ", get_results(train_norm, train_labels, test_norm, test_labels, k)
 
 if __name__ == '__main__':
     main()
