@@ -1,0 +1,7 @@
+hyperparameters
+
+knn
+distance metric
+value of k
+to weight the vote according to distance or not
+type of normalization - min-max,
