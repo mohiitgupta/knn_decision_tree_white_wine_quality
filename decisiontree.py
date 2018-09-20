@@ -99,7 +99,7 @@ def create_decision_tree(features, labels, depth):
         return Node(None, None, predicted_label)
     
     #implement logic to prune decision tree if no of samples are less than a threshold
-    if len(labels) <= 50 and confidence >= 80:
+    if len(labels) <= 10 and confidence >= 90:
         return Node(None, None, predicted_label)
 
     entropy_sample = calculate_entropy(labels)
@@ -196,8 +196,8 @@ def main():
     '''
     depth_axis and folds_axis are for plotting graph using matplotlib
     '''
-    start_depth = 4
-    end_depth = 25
+    start_depth = 18
+    end_depth = 19
     depth_axis = [i for i in range(start_depth,end_depth+1)]
     folds_axis = [[-100 for i in range(start_depth,end_depth+1)] for i in range(4)]
 
@@ -228,10 +228,17 @@ def main():
             ignored_feature = []
             train_norm, train_labels = normalize(train, minValue, maxValue, ignored_feature, scale, isInt)
             valid_norm, valid_labels = normalize(validation, minValue, maxValue, ignored_feature, scale, isInt)
-            # test_norm, test_labels = normalize(test_data, minValue, maxValue, ignored_feature, scale, isInt)
+            test_norm, test_labels = normalize(test_data, minValue, maxValue, ignored_feature, scale, isInt)
 
             #create decision tree
-            root = create_decision_tree(train_norm, train_labels,0)
+            # root = create_decision_tree(train_norm, train_labels,0)
+            # with open('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'wb') as fp:
+            #     pickle.dump(root, fp)
+
+            # print "dump complete for depth", depth
+
+            with open ('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'rb') as fp:
+                root = pickle.load(fp)
 
             # root.PrintTree()
             f1_score, accuracy = get_inference(root, train_norm, train_labels)
@@ -249,16 +256,16 @@ def main():
             '''
             folds_axis[i][depth-start_depth] = f1_score
 
-            # f1_score, accuracy = get_inference(root, test_norm, test_labels)
-            # print "Test: F1 Score: ", f1_score, ", Accuracy: ", accuracy
-            # average_test_f1 += f1_score
-            # average_test_accuracy += accuracy
+            f1_score, accuracy = get_inference(root, test_norm, test_labels)
+            print "Test: F1 Score: ", f1_score, ", Accuracy: ", accuracy
+            average_test_f1 += f1_score
+            average_test_accuracy += accuracy
 
             print ""
         print "Average:"
         print "Training: F1 Score: ", average_training_f1/4.0, ", Accuracy: ", average_training_accuracy/4.0
         print "Validation: F1 Score: ", average_validation_f1/4.0, ", Accuracy: ", average_validation_accuracy/4.0
-        # print "Test: F1 Score: ", average_test_f1/4.0, ", Accuracy: ", average_test_accuracy/4.0
+        print "Test: F1 Score: ", average_test_f1/4.0, ", Accuracy: ", average_test_accuracy/4.0
 
     #plot on matplot lib
     plot_graph(depth_axis, folds_axis)
