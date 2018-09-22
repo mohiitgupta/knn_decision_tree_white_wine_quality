@@ -2,7 +2,7 @@ import pickle
 from distances import find_distance
 from preprocessing import *
 from f1_accuracy import calculate_macro_f1_score
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 def knn_output(test_point, train_points, train_labels, k, is_weighting):
     distance = []

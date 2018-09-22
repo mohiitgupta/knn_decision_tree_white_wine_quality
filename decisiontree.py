@@ -4,7 +4,7 @@ from random import randint
 import random
 import math
 from f1_accuracy import calculate_macro_f1_score
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 MAX_DEPTH = 18
 LABELS_LEN = 10
