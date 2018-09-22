@@ -237,15 +237,16 @@ def main():
             # root = create_decision_tree(train_norm, train_labels,0)
 
 
-            with open('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'wb') as fp:
-                pickle.dump(root, fp)
+            
+            # with open('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'wb') as fp:
+            #     pickle.dump(root, fp)
 
             '''
             using the saved decision tree from pickle file
             uncommnent the below 2 lines if using decision tree from scratch
             '''
-            # with open ('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'rb') as fp:
-            #     root = pickle.load(fp)
+            with open ('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'rb') as fp:
+                root = pickle.load(fp)
 
             # root.PrintTree()
             f1_score, accuracy = get_inference(root, train_norm, train_labels)
