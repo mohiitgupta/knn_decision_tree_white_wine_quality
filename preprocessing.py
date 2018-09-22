@@ -12,9 +12,8 @@ def shuffle_data():
                 row = [float(i) for i in row]
                 data.append(row)
     shuffle(data)
-    with open('shuffled_data_wine', 'wb') as fp:
+    with open('shuffled_data_wine_knn', 'wb') as fp:
         pickle.dump(data, fp)
-
 
 """
 The function divide folds is for dividing the data into k folds which is later

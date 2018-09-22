@@ -25,8 +25,8 @@ def manhattan_distance(point1, point2):
     return distance
 
 def find_distance(point1, point2):
-    distance = euclidean_distance(point1, point2)
-    # distance = manhattan_distance(point1, point2)
+    # distance = euclidean_distance(point1, point2)
+    distance = manhattan_distance(point1, point2)
     # distance = cosine_distance(point1, point2)
     # print distance
     return distance

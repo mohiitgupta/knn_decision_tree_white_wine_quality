@@ -197,7 +197,7 @@ def main():
     depth_axis and folds_axis are for plotting graph using matplotlib
     '''
     start_depth = 18
-    end_depth = 19
+    end_depth = 18
     depth_axis = [i for i in range(start_depth,end_depth+1)]
     folds_axis = [[-100 for i in range(start_depth,end_depth+1)] for i in range(4)]
 
@@ -230,15 +230,22 @@ def main():
             valid_norm, valid_labels = normalize(validation, minValue, maxValue, ignored_feature, scale, isInt)
             test_norm, test_labels = normalize(test_data, minValue, maxValue, ignored_feature, scale, isInt)
 
-            #create decision tree
+            '''
+            create decision tree
+            uncomment the below line to create decision tree
+            '''
             # root = create_decision_tree(train_norm, train_labels,0)
-            # with open('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'wb') as fp:
-            #     pickle.dump(root, fp)
 
-            # print "dump complete for depth", depth
 
-            with open ('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'rb') as fp:
-                root = pickle.load(fp)
+            with open('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'wb') as fp:
+                pickle.dump(root, fp)
+
+            '''
+            using the saved decision tree from pickle file
+            uncommnent the below 2 lines if using decision tree from scratch
+            '''
+            # with open ('decision_tree_depth' + str(depth) + '_fold' + str(i+1), 'rb') as fp:
+            #     root = pickle.load(fp)
 
             # root.PrintTree()
             f1_score, accuracy = get_inference(root, train_norm, train_labels)
@@ -254,7 +261,7 @@ def main():
             '''
             populate the y axis for plotting f1 score for validation data set in folds_axis
             '''
-            folds_axis[i][depth-start_depth] = f1_score
+            folds_axis[i][depth-start_depth] = accuracy
 
             f1_score, accuracy = get_inference(root, test_norm, test_labels)
             print "Test: F1 Score: ", f1_score, ", Accuracy: ", accuracy
@@ -267,8 +274,8 @@ def main():
         print "Validation: F1 Score: ", average_validation_f1/4.0, ", Accuracy: ", average_validation_accuracy/4.0
         print "Test: F1 Score: ", average_test_f1/4.0, ", Accuracy: ", average_test_accuracy/4.0
 
-    #plot on matplot lib
-    plot_graph(depth_axis, folds_axis)
+    # plot on matplot lib
+    # plot_graph(depth_axis, folds_axis)
 
 def plot_graph(depth_axis, folds_axis):
     plt.plot(depth_axis, folds_axis[0], marker='*')
@@ -278,8 +285,8 @@ def plot_graph(depth_axis, folds_axis):
 
     plt.legend(['Fold 1', 'Fold 2', 'Fold 3', 'Fold 4'], loc='upper right')
     plt.xlabel('Max Depth')
-    plt.ylabel('%f1 score in validation set')
-    plt.title('Decision Tree F1 Score v/s Max Depth')
+    plt.ylabel('Accuracy in validation set')
+    plt.title('Decision Tree Accuracy v/s Max Depth')
     plt.show()       
 
 
